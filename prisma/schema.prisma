@@ -1,0 +1,351 @@
+// ============================================================================
+// TradeHub — Prisma Schema
+// ============================================================================
+// Design notes (read this before editing):
+//
+// - Admin vs User are deliberately separate models. Admin is back-office staff
+//   (credentials login, role-gated access to /admin). User is an optional
+//   account for site visitors who want a persistent "My Library" — most
+//   visitors will never create one; they just download as a guest lead.
+//
+// - Lead vs Download are deliberately separate models. Lead is the PERSON
+//   (one row per unique company email, upserted on repeat visits — this is
+//   the sales-facing contact record). Download is the EVENT (one row per
+//   book download attempt, referencing a Lead + a Book). This split is what
+//   makes "My Library" and per-book download analytics both possible without
+//   duplicating contact data on every download.
+//
+// - Company here means PUBLISHER/VENDOR — the entity behind a book, managed
+//   through the admin's "Companies CRUD". A lead's own employer is captured
+//   as free text (companyName/companyDomain) on the Lead itself, since visitors
+//   aren't choosing from a pre-managed list of employers.
+//
+// - Session + VerificationToken follow the exact shape the NextAuth Prisma
+//   adapter expects, so Module 5 can wire the adapter in without schema changes.
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum AdminRole {
+  SUPER_ADMIN // full access, incl. managing other Admins
+  ADMIN // full access to content + leads, no Admin management
+  EDITOR // books/categories only, no access to Leads/Downloads/Settings
+}
+
+enum BookStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum BookFormat {
+  EBOOK
+  WHITEPAPER
+  REPORT
+  CASE_STUDY
+  GUIDE
+  DATASHEET
+  WEBINAR
+}
+
+enum CompanySize {
+  SIZE_1_10
+  SIZE_11_50
+  SIZE_51_200
+  SIZE_201_500
+  SIZE_501_1000
+  SIZE_1001_5000
+  SIZE_5001_10000
+  SIZE_10000_PLUS
+}
+
+enum DownloadStatus {
+  PENDING // token issued, email not yet sent
+  EMAIL_SENT // PDF email dispatched
+  DOWNLOADED // user clicked the emailed link and the file was served
+  EXPIRED // token TTL passed before use
+  FAILED // email or file delivery failed
+}
+
+enum EmailStatus {
+  QUEUED
+  SENT
+  DELIVERED
+  OPENED
+  CLICKED
+  BOUNCED
+  COMPLAINED
+  FAILED
+}
+
+// ============================================================================
+// AUTH — Admin (back office)
+// ============================================================================
+
+model Admin {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  password     String // bcrypt hash — see Module 5
+  role         AdminRole @default(ADMIN)
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  createdBooks Book[] @relation("BookCreatedByAdmin")
+
+  @@map("admins")
+}
+
+// ============================================================================
+// AUTH — User (optional visitor account for "My Library")
+// ============================================================================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String? // null if the account was created via email-link only
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions  Session[]
+  leads     Lead[] // a User can be linked back to the Lead record(s) they generated
+  downloads Download[]
+
+  @@map("users")
+}
+
+// NextAuth Prisma adapter shape — do not rename fields.
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// NextAuth Prisma adapter shape — do not rename fields.
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================================================
+// CATALOG
+// ============================================================================
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  icon        String? // lucide-react icon name, e.g. "Cloud", "ShieldCheck"
+  order       Int      @default(0) // manual sort order for nav/menus
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  books BookCategory[]
+
+  @@index([isActive, order])
+  @@map("categories")
+}
+
+/// Publisher/vendor behind a book — managed via Admin > Companies CRUD.
+/// NOT the same thing as a lead's employer (see Lead.companyName below).
+model Company {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  domain    String? // e.g. "cisco.com" — used to render a favicon/logo fallback
+  logoUrl   String?
+  website   String?
+  about     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  books Book[]
+
+  @@map("companies")
+}
+
+model Book {
+  id               String     @id @default(cuid())
+  title            String
+  slug             String     @unique
+  description      String // long description — Book Detail page
+  shortDescription String? // trimmed copy for Book Card
+  coverImageUrl    String // Cloudinary URL
+  pdfFileKey       String // R2/S3 object key — NEVER expose directly, only via signed token
+  fileSizeBytes    Int?
+  pages            Int?
+  language         String     @default("English")
+  format           BookFormat @default(EBOOK)
+  tags             String[]   @default([])
+  status           BookStatus @default(DRAFT)
+  isFeatured       Boolean    @default(false)
+  isTrending       Boolean    @default(false)
+  publishedAt      DateTime?
+
+  // Denormalized counters — updated on write, avoids COUNT(*) on every page load.
+  viewCount     Int @default(0)
+  downloadCount Int @default(0)
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
+
+  createdByAdminId String?
+  createdByAdmin   Admin?  @relation("BookCreatedByAdmin", fields: [createdByAdminId], references: [id], onDelete: SetNull)
+
+  categories BookCategory[]
+  downloads  Download[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, publishedAt])
+  @@index([isFeatured])
+  @@index([isTrending])
+  @@index([companyId])
+  @@map("books")
+}
+
+/// Explicit join table (rather than an implicit Prisma m-n) so a book's
+/// category placement can later carry its own metadata if needed
+/// (e.g. per-category featured ordering) without a schema migration.
+model BookCategory {
+  id         String   @id @default(cuid())
+  bookId     String
+  categoryId String
+  createdAt  DateTime @default(now())
+
+  book     Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, categoryId])
+  @@index([categoryId])
+  @@map("book_categories")
+}
+
+// ============================================================================
+// LEAD GENERATION
+// ============================================================================
+
+/// One row per unique person (deduped by company email). This is the
+/// sales-facing contact record shown in Admin > Leads.
+model Lead {
+  id String @id @default(cuid())
+
+  fullName     String
+  email        String  @unique // validated as a company/business domain — see lib/validations/email.ts
+  phone        String
+  jobTitle     String
+  companyName  String
+  companyDomain String? // derived from email at write time, for admin filtering/analytics
+
+  country    String
+  state      String?
+  city       String?
+  department String
+  industry   String
+  companySize CompanySize
+
+  consentGiven Boolean  @default(false)
+  consentAt    DateTime?
+
+  ipAddress String?
+  userAgent String?
+
+  userId String? // set if this person also has a User account (My Library)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  downloads Download[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([companyDomain])
+  @@index([industry])
+  @@index([createdAt])
+  @@map("leads")
+}
+
+/// One row per download EVENT. Ties a Lead to a Book at a point in time,
+/// and carries the secure token lifecycle for that specific request.
+model Download {
+  id String @id @default(cuid())
+
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  bookId String
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  userId String? // set if the downloader was signed in
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Store a HASH of the token, never the raw token — the raw value only ever
+  // lives in the emailed URL. See lib/tokens.ts (Module 13).
+  tokenHash      String         @unique
+  tokenExpiresAt DateTime
+  status         DownloadStatus @default(PENDING)
+  downloadedAt   DateTime?
+
+  ipAddress String?
+  userAgent String?
+
+  emailLogs EmailLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([leadId])
+  @@index([bookId])
+  @@index([status])
+  @@map("downloads")
+}
+
+/// One row per email SEND ATTEMPT for a download (supports resends), so
+/// Admin > Email Logs can show full delivery history per download.
+model EmailLog {
+  id String @id @default(cuid())
+
+  downloadId String
+  download   Download @relation(fields: [downloadId], references: [id], onDelete: Cascade)
+
+  to               String
+  subject          String
+  provider         String      @default("resend")
+  providerMessageId String?
+  status           EmailStatus @default(QUEUED)
+  error            String?
+  sentAt           DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([downloadId])
+  @@index([status])
+  @@map("email_logs")
+}
