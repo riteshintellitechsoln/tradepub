@@ -18,7 +18,7 @@ export default async function MarketingLayout({
   const categories = await getActiveCategories();
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-background">
       <Navbar categories={categories} />
       <div className="flex flex-1">
         <DesktopSidebar categories={categories} />

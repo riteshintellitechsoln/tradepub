@@ -71,6 +71,7 @@ const SAMPLE_BOOKS: {
   isFeatured?: boolean;
   isTrending?: boolean;
 }[] = [
+  
   {
     title: "The Complete Guide to Zero Trust Security",
     description:
@@ -147,6 +148,317 @@ const SAMPLE_BOOKS: {
     format: BookFormat.GUIDE,
     pages: 30,
   },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+   {
+    title: "Financial Planning Software: A CFO's Evaluation Framework",
+    description:
+      "How finance leaders are shortlisting FP&A platforms, with a weighted scorecard you can adapt for your own RFP.",
+    companyName: "Microsoft",
+    categoryNames: ["Finance", "Enterprise Applications"],
+    format: BookFormat.GUIDE,
+    pages: 30,
+  },
+  
+  {
+  title: "AI Transformation Strategy for Enterprises",
+  description:
+    "A complete guide for organizations adopting artificial intelligence, automation, and machine learning solutions.",
+  companyName: "Microsoft",
+  categoryNames: ["Software Development", "Data Tools"],
+  format: BookFormat.EBOOK,
+  pages: 72,
+  isFeatured: true,
+},
+
+{
+  title: "Cloud Migration Roadmap 2026",
+  description:
+    "Step-by-step cloud migration planning guide covering strategy, security, cost optimization, and implementation.",
+  companyName: "Amazon Web Services",
+  categoryNames: ["Cloud", "Data Infrastructure"],
+  format: BookFormat.WHITEPAPER,
+  pages: 55,
+  isFeatured: true,
+  isTrending: true,
+},
+
+{
+  title: "Enterprise Network Security Handbook",
+  description:
+    "Learn modern network security practices including firewalls, zero trust, monitoring, and threat protection.",
+  companyName: "Cisco",
+  categoryNames: ["Security", "Networking"],
+  format: BookFormat.GUIDE,
+  pages: 80,
+  isFeatured: true,
+},
+
+{
+  title: "Data Analytics Modern Platform Guide",
+  description:
+    "Explore modern data analytics platforms, data pipelines, dashboards, and business intelligence solutions.",
+  companyName: "IBM",
+  categoryNames: ["Data Tools", "Data Infrastructure"],
+  format: BookFormat.REPORT,
+  pages: 64,
+  isTrending: true,
+},
+
+{
+  title: "Enterprise Application Modernization",
+  description:
+    "Strategies for upgrading legacy enterprise applications with modern architecture and cloud technologies.",
+  companyName: "IBM",
+  categoryNames: ["Enterprise Applications", "Cloud"],
+  format: BookFormat.WHITEPAPER,
+  pages: 48,
+},
+
+{
+  title: "DevOps Automation Complete Guide",
+  description:
+    "A practical guide to CI/CD pipelines, automation tools, containers, and modern software delivery.",
+  companyName: "Microsoft",
+  categoryNames: ["Software Development", "Information Technology"],
+  format: BookFormat.EBOOK,
+  pages: 90,
+  isFeatured: true,
+},
+
+{
+  title: "Storage Infrastructure Planning Guide",
+  description:
+    "Learn enterprise storage solutions, backup strategies, and scalable infrastructure planning.",
+  companyName: "Dell Technologies",
+  categoryNames: ["Storage", "Servers"],
+  format: BookFormat.GUIDE,
+  pages: 45,
+},
+
+{
+  title: "Cybersecurity Career Roadmap",
+  description:
+    "Complete career roadmap covering certifications, skills, and opportunities in cybersecurity.",
+  companyName: "Cisco",
+  categoryNames: ["Career", "Security"],
+  format: BookFormat.REPORT,
+  pages: 60,
+  isTrending: true,
+},
+
+{
+  title: "Financial Technology Trends 2026",
+  description:
+    "Explore fintech innovation, digital banking, automation, and financial technology trends.",
+  companyName: "Salesforce",
+  categoryNames: ["Finance", "Enterprise Applications"],
+  format: BookFormat.REPORT,
+  pages: 50,
+},
+
+{
+  title: "Healthcare Technology Innovation Report",
+  description:
+    "Insights into healthcare IT systems, digital transformation, and technology adoption.",
+  companyName: "Microsoft",
+  categoryNames: ["Healthcare", "Information Technology"],
+  format: BookFormat.WHITEPAPER,
+  pages: 58,
+},
+
+{
+  title: "Marketing Automation Strategy Guide",
+  description:
+    "Learn how businesses use automation platforms to improve marketing performance and customer engagement.",
+  companyName: "Salesforce",
+  categoryNames: ["Marketing", "Enterprise Applications"],
+  format: BookFormat.GUIDE,
+  pages: 44,
+},
+
+{
+  title: "Leadership and Management Excellence",
+  description:
+    "A practical leadership guide for managers building high-performing teams.",
+  companyName: "IBM",
+  categoryNames: ["Management", "Career"],
+  format: BookFormat.EBOOK,
+  pages: 70,
+},
+
+{
+  title: "Manufacturing Digital Transformation",
+  description:
+    "How smart factories use IoT, automation, and analytics to improve production.",
+  companyName: "Dell Technologies",
+  categoryNames: ["Manufacturing", "Information Technology"],
+  format: BookFormat.WHITEPAPER,
+  pages: 52,
+},
+
+{
+  title: "Business Operations Optimization Guide",
+  description:
+    "Improve operational efficiency using technology, automation, and analytics.",
+  companyName: "Microsoft",
+  categoryNames: ["Operations", "Management"],
+  format: BookFormat.GUIDE,
+  pages: 46,
+},
+
+{
+  title: "Modern Sales Enablement Handbook",
+  description:
+    "Strategies and tools for improving sales productivity and customer relationships.",
+  companyName: "Salesforce",
+  categoryNames: ["Sales", "Marketing"],
+  format: BookFormat.EBOOK,
+  pages: 62,
+},
+
 ];
 
 async function main() {
