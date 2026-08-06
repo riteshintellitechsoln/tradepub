@@ -32,7 +32,7 @@ export function Navbar({ categories }: { categories: NavCategory[] }) {
         scrolled ? "border-slate-200 shadow-md" : "border-slate-200/80 shadow-none"
       }`}
     >
-      <div className="container flex h-16 items-center gap-3 px-4 sm:h-[72px] sm:px-6">
+      <div className=" flex h-16 items-center gap-13 px- sm:h-[72px] sm:px-6">
         <MobileNav categories={categories} />
 
         <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="TradeHub home">
