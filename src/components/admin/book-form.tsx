@@ -218,6 +218,15 @@ export function BookForm({ companies, categories, book }: BookFormProps) {
                     value={field.value ?? ""}
                     onChange={(e) => field.onChange(e.target.valueAsNumber)}
                   />
+
+                  {/* <Input
+                    type="number"
+                    value={field.value ?? ""}
+                    onChange={(e) => {
+                      const parsed = e.target.valueAsNumber;
+                      field.onChange(Number.isNaN(parsed) ? undefined : parsed);
+                    }}
+                  /> */}
                 </FormControl>
                 <FormMessage />
               </FormItem>

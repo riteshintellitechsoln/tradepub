@@ -70,6 +70,15 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "placehold.co",
       },
+      // {
+      //   protocol: "https",
+      //   hostname: "*.r2.dev",
+      // },
+      // {
+      //   protocol: "https",
+      //   hostname: "*.s3.amazonaws.com",
+      // },
+
       {
         protocol: "https",
         hostname: "*.r2.dev",
@@ -78,6 +87,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.s3.amazonaws.com",
       },
+      {
+        protocol: "https",
+        hostname: "*.gstatic.com",
+      },
+
     ],
     formats: ["image/avif", "image/webp"],
     dangerouslyAllowSVG: true,

@@ -34,14 +34,26 @@ export function CookieConsent() {
 
   if (!visible) return null;
 
+  // return (
+  //   <div
+  //     className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+  //     role="dialog"
+  //     aria-modal="true"
+  //     aria-labelledby="cookie-consent-title"
+  //   >
+  //     <div className="w-full max-w-md overflow-hidden rounded-xl border bg-background shadow-2xl">
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-3 sm:justify-center"
       role="dialog"
       aria-modal="true"
       aria-labelledby="cookie-consent-title"
     >
-      <div className="w-full max-w-md overflow-hidden rounded-xl border bg-background shadow-2xl">
+      <div className="w-full max-w-5xl animate-in slide-in-from-bottom-12 overflow-hidden rounded-xl border bg-background shadow-2xl duration-700 ease-out">
+
+              {/* <div className="w-full max-w-3xl animate-in slide-in-from-bottom-8 overflow-hidden rounded-xl border bg-background shadow-2xl duration-500"> */}
+
+
         <div className="h-1 bg-seal" />
 
         <div className="p-6">
@@ -67,7 +79,7 @@ export function CookieConsent() {
               className="flex-1"
               onClick={() => respond("rejected")}
             >
-              Reject non-essential
+              Reject all
             </Button>
           </div>
 
