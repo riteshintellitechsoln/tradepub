@@ -231,6 +231,18 @@ export async function incrementBookViewCount(bookId: string) {
   });
 }
 
+// export async function getFormatCounts() {
+//   const rows = await db.book.groupBy({
+//     by: ["format"],
+//     where: { status: "PUBLISHED" },
+//     _count: { _all: true },
+//   });
+
+//   return rows
+//     .map((row) => ({ format: row.format, count: row._count._all }))
+//     .sort((a, b) => b.count - a.count);
+// }
+
 // A lean projection for the Download flow (Module 13) — just enough to
 // render "here's what you're about to get" on /download and /thank-you.
 // Deliberately narrower than getBookBySlug: no description, no tags, no
