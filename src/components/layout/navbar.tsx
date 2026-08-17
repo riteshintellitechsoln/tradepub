@@ -3,16 +3,26 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
-import { BookOpen, Compass, Library, Sparkles } from "lucide-react";
+import { Bookmark, BookOpen, Compass, Library, Sparkles } from "lucide-react";
 import { SearchBar } from "@/components/layout/search-bar";
 import { UserNav } from "@/components/layout/user-nav";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import type { NavCategory } from "@/actions/categories";
 
+import { SavedCountBadge } from "@/components/layout/saved-count-badge";
+
+// const navLinks = [
+//   { href: "/category", label: "Explore", icon: Compass },
+//   { href: "/my-library", label: "My library", icon: Library },
+//   { href: "/saved", label: "Saved", icon: Bookmark },
+// ];
+
 const navLinks = [
   { href: "/category", label: "Explore", icon: Compass },
   { href: "/my-library", label: "My library", icon: Library },
+  { href: "/saved", label: "Saved", icon: Bookmark },
 ];
+
 
 export function Navbar({ categories }: { categories: NavCategory[] }) {
   const [hovered, setHovered] = useState<string | null>(null);
@@ -56,13 +66,22 @@ export function Navbar({ categories }: { categories: NavCategory[] }) {
           aria-label="Primary navigation"
           onMouseLeave={() => setHovered(null)}
         >
-          {navLinks.map(({ href, label, icon: Icon }) => (
+          {/* {navLinks.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
               href={href}
               onMouseEnter={() => setHovered(href)}
               className="relative inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors"
+            > */}
+
+            {navLinks.map(({ href, label, icon: Icon }) => (
+            <Link
+              key={href}
+              href={href}
+              onMouseEnter={() => setHovered(href)}
+              className="relative inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors"
             >
+              {href === "/saved" && <SavedCountBadge />}
               {hovered === href && (
                 <motion.span
                   layoutId="navbar-hover-highlight"
