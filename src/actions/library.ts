@@ -11,11 +11,14 @@ import { resendDownloadEmail } from "@/actions/download";
 // simply having that email, since a real download link already went
 // there. No password, no signup flow.
 //
-// Rate-limited (not admin-gated) rather than locked behind auth — the
-// limiter exists specifically to discourage using this as an
-// email-enumeration probe ("does X person have a Lead record?") while
-// still letting anyone who legitimately downloaded something look up
-// their own history.
+// NOTE ON A DELIBERATE TRADE-OFF: this explicitly tells the visitor when
+// an email has no Lead record at all ("found: false"), rather than
+// showing the same empty state as a real lead with zero downloads. That's
+// a product choice for clearer UX — the cost is that it makes this
+// endpoint usable to probe "does this email exist as a lead," a mild
+// email-enumeration exposure. Rate-limiting below is what keeps that from
+// being trivially automatable at scale, but it doesn't eliminate the
+// exposure entirely.
 export async function getLibraryByEmail(email: string) {
   const headersList = await headers();
   const ip = headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
@@ -36,10 +39,7 @@ export async function getLibraryByEmail(email: string) {
   });
 
   if (!lead) {
-    // Same shape as a real match with zero downloads — a page that renders
-    // differently for "unknown email" vs. "known email, nothing yet" would
-    // let this be used to enumerate which emails exist as leads.
-    return { success: true as const, lead: null, downloads: [] };
+    return { success: true as const, found: false as const, downloads: [] };
   }
 
   const downloads = await db.download.findMany({
@@ -60,7 +60,7 @@ export async function getLibraryByEmail(email: string) {
     },
   });
 
-  return { success: true as const, lead, downloads };
+  return { success: true as const, found: true as const, lead, downloads };
 }
 
 // Self-service resend — deliberately re-checks that the download actually

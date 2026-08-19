@@ -22,6 +22,7 @@ export const bookSchema = z.object({
   isFeatured: z.boolean().default(false),
   isTrending: z.boolean().default(false),
   downloadLimit: z.coerce.number().int().positive().optional(),
+  forceOutOfStock: z.boolean().default(false),
   tags: z.string().optional().default(""), // comma-separated in the form, split before saving
   companyId: z.string().min(1, "Select a publisher"),
   categoryIds: z.array(z.string()).min(1, "Select at least one category"),

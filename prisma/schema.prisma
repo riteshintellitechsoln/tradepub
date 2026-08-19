@@ -213,7 +213,17 @@ model Book {
   viewCount     Int @default(0)
   downloadCount Int @default(0)
 
+  // downloadLimit Int?
+
   downloadLimit Int?
+// Admin-controlled manual override — when true, the book shows as
+// "Out of Stock" immediately regardless of downloadCount/downloadLimit.
+// Independent of the automatic stock check; this is a deliberate kill
+// switch for cases like a licensing issue or a book being pulled without
+// needing to touch the numeric limit.
+// forceOutOfStock Boolean @default(false)
+forceOutOfStock Boolean @default(false)
+
 
   companyId String
   company   Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
