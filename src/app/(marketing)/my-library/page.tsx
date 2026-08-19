@@ -1,13 +1,148 @@
+// import Image from "next/image";
+// import Link from "next/link";
+// import { format } from "date-fns";
+// import type { Metadata } from "next";
+// import { Mail, PackageCheck, PackageX, Clock } from "lucide-react";
+// import { auth } from "@/lib/auth";
+// import { getLibraryByEmail } from "@/actions/library";
+// import { LibraryLookupForm } from "@/components/library/library-lookup-form";
+// import { LibraryResendButton } from "@/components/library/library-resend-button";
+// import { EmptyState } from "@/components/shared/empty-state";
+// import { Badge } from "@/components/ui/badge";
+
+// export const metadata: Metadata = { title: "My Library" };
+
+// interface MyLibraryPageProps {
+//   searchParams: Promise<{ email?: string }>;
+// }
+
+// const STATUS_CONFIG = {
+//   EMAIL_SENT: { label: "Email Sent", variant: "default" as const, icon: Mail },
+//   DOWNLOADED: { label: "Downloaded", variant: "default" as const, icon: PackageCheck },
+//   PENDING: { label: "Pending", variant: "secondary" as const, icon: Clock },
+//   FAILED: { label: "Failed", variant: "destructive" as const, icon: PackageX },
+//   EXPIRED: { label: "Expired", variant: "outline" as const, icon: Clock },
+// };
+
+// export default async function MyLibraryPage({ searchParams }: MyLibraryPageProps) {
+//   const session = await auth();
+//   const sp = await searchParams;
+//   const email = session?.user?.email ?? sp.email;
+
+//   if (!email) {
+//     return (
+//       <div className="container flex min-h-[60vh] max-w-md flex-col items-center justify-center py-20 text-center">
+//         <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+//           <Mail className="h-6 w-6 text-primary" />
+//         </div>
+//         <h1 className="font-display text-2xl font-bold">My Library</h1>
+//         <p className="mt-2 text-sm text-muted-foreground">
+//           Enter the email you used to download resources to see your history — no
+//           account needed.
+//         </p>
+//         <div className="mt-6 w-full rounded-xl border bg-card p-5 shadow-sm">
+//           <LibraryLookupForm className="w-full" />
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   const result = await getLibraryByEmail(email);
+
+//   if (!result.success) {
+//     return (
+//       <div className="container max-w-md py-20 text-center">
+//         <p className="text-sm font-medium text-destructive">{result.error}</p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="container max-w-3xl py-16">
+//       <div className="mb-8">
+//         <p className="text-xs font-semibold uppercase tracking-[0.15em] text-seal">Your history</p>
+//         <h1 className="mt-1 font-display text-3xl font-bold">My Library</h1>
+//         <div className="my-4 h-px w-16 bg-seal" />
+//         <p className="text-sm text-muted-foreground">
+//           Showing downloads for <span className="font-medium text-foreground">{email}</span>
+//           {!session?.user && (
+//             <>
+//               {" "}
+//               ·{" "}
+//               <Link href="/my-library" className="underline hover:text-foreground">
+//                 Look up a different email
+//               </Link>
+//             </>
+//           )}
+//         </p>
+//       </div>
+
+//       {result.downloads.length === 0 ? (
+//         <EmptyState
+//           title="No downloads yet for this email"
+//           description="Browse the catalog and download something — it'll show up here."
+//         />
+//       ) : (
+//         <div className="space-y-4">
+//           {result.downloads.map((download) => {
+//             const statusConfig = STATUS_CONFIG[download.status];
+//             const StatusIcon = statusConfig.icon;
+
+//             return (
+//               <div
+//                 key={download.id}
+//                 className="group flex flex-col gap-4 rounded-xl border bg-card p-4 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary hover:shadow-[0_20px_40px_-8px_rgba(22,35,78,0.15),0_8px_16px_-4px_rgba(22,35,78,0.1)] sm:flex-row sm:items-center"
+//               >
+//                 <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-lg border shadow-sm">
+//                   <Image
+//                     src={download.book.coverImageUrl}
+//                     alt={download.book.title}
+//                     fill
+//                     sizes="64px"
+//                     className="object-cover transition-transform duration-300 group-hover:scale-105"
+//                   />
+//                 </div>
+
+//                 <div className="min-w-0 flex-1">
+//                   <Link
+//                     href={`/book/${download.book.slug}`}
+//                     className="font-display font-semibold leading-snug hover:underline"
+//                   >
+//                     {download.book.title}
+//                   </Link>
+//                   <p className="text-xs text-muted-foreground">{download.book.company.name}</p>
+//                   <p className="mt-1 text-xs text-muted-foreground">
+//                     Requested {format(download.createdAt, "MMM d, yyyy")}
+//                   </p>
+//                 </div>
+
+//                 <div className="flex shrink-0 items-center gap-3 sm:flex-col sm:items-end">
+//                   <Badge variant={statusConfig.variant} className="gap-1">
+//                     <StatusIcon className="h-3 w-3" />
+//                     {statusConfig.label}
+//                   </Badge>
+//                   <LibraryResendButton downloadId={download.id} email={email} />
+//                 </div>
+//               </div>
+//             );
+//           })}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
 import type { Metadata } from "next";
+import { Mail, Download } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getLibraryByEmail } from "@/actions/library";
 import { LibraryLookupForm } from "@/components/library/library-lookup-form";
-import { LibraryResendButton } from "@/components/library/library-resend-button";
 import { EmptyState } from "@/components/shared/empty-state";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = { title: "My Library" };
 
@@ -15,10 +150,6 @@ interface MyLibraryPageProps {
   searchParams: Promise<{ email?: string }>;
 }
 
-// A signed-in User (Module 5) skips the lookup form entirely — their
-// session email is used directly. Everyone else (the overwhelming
-// majority, since downloading never requires an account) looks themselves
-// up by email, the same way TradePub's real "My Library" works.
 export default async function MyLibraryPage({ searchParams }: MyLibraryPageProps) {
   const session = await auth();
   const sp = await searchParams;
@@ -26,13 +157,18 @@ export default async function MyLibraryPage({ searchParams }: MyLibraryPageProps
 
   if (!email) {
     return (
-      <div className="container flex min-h-[50vh] max-w-md flex-col items-center justify-center py-20 text-center">
+      <div className="container flex min-h-[60vh] max-w-md flex-col items-center justify-center py-20 text-center">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+          <Mail className="h-6 w-6 text-primary" />
+        </div>
         <h1 className="font-display text-2xl font-bold">My Library</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Enter the email you used to download resources to see your history — no
           account needed.
         </p>
-        <LibraryLookupForm className="mt-6 w-full" />
+        <div className="mt-6 w-full rounded-xl border bg-card p-5 shadow-sm">
+          <LibraryLookupForm className="w-full" />
+        </div>
       </div>
     );
   }
@@ -48,16 +184,18 @@ export default async function MyLibraryPage({ searchParams }: MyLibraryPageProps
   }
 
   return (
-    <div className="container max-w-3xl py-16">
+    <div className="container max-w-4xl py-16">
       <div className="mb-8">
-        <h1 className="font-display text-2xl font-bold">My Library</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="text-xs font-semibold uppercase tracking-[0.15em] text-seal">Your history</p>
+        <h1 className="mt-1 font-display text-3xl font-bold">My Library</h1>
+        <div className="my-4 h-px w-16 bg-seal" />
+        <p className="text-sm text-muted-foreground">
           Showing downloads for <span className="font-medium text-foreground">{email}</span>
           {!session?.user && (
             <>
               {" "}
               ·{" "}
-              <Link href="/my-library" className="underline">
+              <Link href="/my-library" className="underline hover:text-foreground">
                 Look up a different email
               </Link>
             </>
@@ -73,19 +211,25 @@ export default async function MyLibraryPage({ searchParams }: MyLibraryPageProps
       ) : (
         <div className="space-y-4">
           {result.downloads.map((download) => (
-            <div key={download.id} className="flex items-center gap-4 rounded-lg border p-4">
-              <div className="relative h-20 w-14 shrink-0 overflow-hidden rounded border">
+                       <div
+              key={download.id}
+              className="group flex flex-col gap-4 rounded-xl border bg-card p-4 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary hover:bg-gradient-to-r hover:from-primary/10 hover:to-seal/10 hover:shadow-[0_20px_40px_-8px_rgba(22,35,78,0.2),0_8px_16px_-4px_rgba(22,35,78,0.12)] sm:flex-row sm:items-center"
+            >
+              <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-lg border shadow-sm">
                 <Image
                   src={download.book.coverImageUrl}
                   alt={download.book.title}
                   fill
-                  sizes="56px"
-                  className="object-cover"
+                  sizes="64px"
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
                 />
               </div>
 
               <div className="min-w-0 flex-1">
-                <Link href={`/book/${download.book.slug}`} className="font-medium hover:underline">
+                <Link
+                  href={`/book/${download.book.slug}`}
+                  className="font-display font-semibold leading-snug hover:underline"
+                >
                   {download.book.title}
                 </Link>
                 <p className="text-xs text-muted-foreground">{download.book.company.name}</p>
@@ -94,19 +238,26 @@ export default async function MyLibraryPage({ searchParams }: MyLibraryPageProps
                 </p>
               </div>
 
-              <Badge
-                variant={
-                  download.status === "FAILED"
-                    ? "destructive"
-                    : download.status === "DOWNLOADED" || download.status === "EMAIL_SENT"
-                      ? "default"
-                      : "secondary"
-                }
+              {/* <Button
+                asChild
+                className="shrink-0 transition-transform duration-200 group-hover:scale-105"
               >
-                {download.status}
-              </Badge>
+                <Link href={`/download?book=${download.book.slug}`}>
+                  <Download className="h-4 w-4" />
+                  Get it again
+                </Link>
+              </Button> */}
 
-              <LibraryResendButton downloadId={download.id} email={email} />
+                            <Button
+                asChild
+                className="shrink-0 bg-gradient-to-r from-primary to-seal text-primary-foreground transition-transform duration-200 hover:opacity-90 group-hover:scale-105"
+              >
+                <Link href={`/download?book=${download.book.slug}`}>
+                  <Download className="h-4 w-4" />
+                  Get it again
+                </Link>
+              </Button>
+              
             </div>
           ))}
         </div>

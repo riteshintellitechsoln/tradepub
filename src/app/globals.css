@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 40% 98%;
     --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
@@ -86,5 +86,11 @@
     @apply bg-background text-foreground;
     font-feature-settings: "cv11", "ss01";
     font-variation-settings: "opsz" 32;
+    min-width: 320px;
+    background-image: radial-gradient(circle at 50% -20%, hsl(var(--primary) / 0.08), transparent 34rem);
+  }
+
+  ::selection {
+    @apply bg-primary/20 text-foreground;
   }
 }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Eye, Download } from "lucide-react";
 import { Badge, type BadgeProps } from "@/components/ui/badge";
+import { ResourceActions } from "@/components/books/resource-actions";
 import type { BookCardData } from "@/types";
 
 // The reusable Book Card — built here in Module 9 because the Home page
@@ -27,7 +28,7 @@ export function BookCard({
 
   return (
     <div className="group flex flex-col">
-      <div className="relative aspect-[3/4] overflow-hidden rounded-lg border bg-muted">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-xl border bg-muted shadow-sm transition duration-300 group-hover:-translate-y-1 group-hover:shadow-lg">
         <Link
           href={`/book/${book.slug}`}
           className="absolute inset-0 z-0 block"
@@ -50,6 +51,10 @@ export function BookCard({
             {badge.label}
           </Badge>
         )}
+
+        <div className="absolute right-2 top-2 z-30 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
+          <ResourceActions title={book.title} url={`/book/${book.slug}`} />
+        </div>
 
         {/* "Download Pass" — slides up from the bottom edge on hover. */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 translate-y-full border-t-2 border-dashed border-background/70 bg-background/95 p-3 backdrop-blur transition-transform duration-300 ease-out group-hover:translate-y-0">
@@ -75,7 +80,7 @@ export function BookCard({
         </div>
       </div>
 
-      <div className="mt-3 space-y-1">
+      <div className="mt-3 space-y-1 px-0.5">
         {category && (
           <p className="text-[11px] font-medium uppercase tracking-wide text-primary">
             {category.name}

@@ -1,8 +1,9 @@
-import { Hero } from "@/components/home/hero";
+ import { Hero } from "@/components/home/hero";
 import { SectionHeader } from "@/components/home/section-header";
 import { CategoryScroller } from "@/components/home/category-scroller";
 import { BookGrid } from "@/components/books/book-grid";
 import { BookCard } from "@/components/books/book-card";
+import { Reveal, RevealItem } from "@/components/motion/reveal";
 import { getFeaturedBooks, getLatestBooks, getTrendingBooks } from "@/actions/books";
 import { getCategoriesWithBookCounts } from "@/actions/categories";
 import { getHomeStats } from "@/actions/stats";
@@ -32,52 +33,65 @@ export default async function HomePage() {
     <>
       <Hero stats={heroStats} coverImages={heroCovers} />
 
-      <section className="container py-10">
-        <SectionHeader
-          eyebrow="Browse by topic"
-          title="Popular Categories"
-          viewAllHref="/category"
-        />
-        <CategoryScroller categories={categories} />
+      <section className="container py-12 sm:py-16">
+        <Reveal>
+          <SectionHeader
+            eyebrow="Browse by topic"
+            title="Popular Categories"
+            viewAllHref="/category"
+          />
+          <CategoryScroller categories={categories} />
+        </Reveal>
       </section>
 
       {featured.length > 0 && (
-        <section id="featured" className="border-t bg-muted/20 py-10">
+        <section id="featured" className="border-y bg-white/60 py-12 sm:py-16">
           <div className="container">
-            <SectionHeader
-              eyebrow="Editor's picks"
-              title="Featured Resources"
-              description="Hand-picked for relevance and depth."
-            />
+            <Reveal>
+              <SectionHeader
+                eyebrow="Editor's picks"
+                title="Featured Resources"
+                description="Hand-picked for relevance and depth."
+              />
+            </Reveal>
             <BookGrid>
-              {featured.map((book) => (
-                <BookCard key={book.id} book={book} badge={{ label: "Featured" }} />
+              {featured.map((book, i) => (
+                <RevealItem key={book.id} index={i}>
+                  <BookCard book={book} badge={{ label: "Featured" }} />
+                </RevealItem>
               ))}
             </BookGrid>
           </div>
         </section>
       )}
 
-      <section id="latest" className="container py-10">
-        <SectionHeader eyebrow="Fresh off the press" title="Latest Resources" viewAllHref="/category" />
+      <section id="latest" className="container py-12 sm:py-16">
+        <Reveal>
+          <SectionHeader eyebrow="Fresh off the press" title="Latest Resources" viewAllHref="/category" />
+        </Reveal>
         <BookGrid>
-          {latest.map((book) => (
-            <BookCard key={book.id} book={book} />
+          {latest.map((book, i) => (
+            <RevealItem key={book.id} index={i}>
+              <BookCard book={book} />
+            </RevealItem>
           ))}
         </BookGrid>
       </section>
 
       {trending.length > 0 && (
-        <section id="trending" className="border-t bg-muted/20 py-10">
+        <section id="trending" className="border-y bg-white/60 py-12 sm:py-16">
           <div className="container">
-            <SectionHeader eyebrow="Most downloaded" title="Trending Now" />
+            <Reveal>
+              <SectionHeader eyebrow="Most downloaded" title="Trending Now" />
+            </Reveal>
             <BookGrid>
-              {trending.map((book) => (
-                <BookCard
-                  key={book.id}
-                  book={book}
-                  badge={{ label: "Trending", variant: "default" }}
-                />
+              {trending.map((book, i) => (
+                <RevealItem key={book.id} index={i}>
+                  <BookCard
+                    book={book}
+                    badge={{ label: "Trending", variant: "default" }}
+                  />
+                </RevealItem>
               ))}
             </BookGrid>
           </div>

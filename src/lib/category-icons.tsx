@@ -1,0 +1,53 @@
+import {
+  BookMarked,
+  Cpu,
+  Database,
+  Wrench,
+  Monitor,
+  Laptop,
+  Building2,
+  Network,
+  Cloud,
+  Server,
+  ShieldCheck,
+  Code2,
+  HardDrive,
+  Briefcase,
+  Wallet,
+  HeartPulse,
+  Megaphone,
+  Users,
+  Factory,
+  Workflow,
+  TrendingUp,
+  UserCog,
+  type LucideIcon,
+} from "lucide-react";
+
+const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  "Information Technology": Cpu,
+  "Data Infrastructure": Database,
+  "Data Tools": Wrench,
+  Desktops: Monitor,
+  Laptops: Laptop,
+  "Enterprise Applications": Building2,
+  Networking: Network,
+  Cloud: Cloud,
+  Servers: Server,
+  Security: ShieldCheck,
+  "Software Development": Code2,
+  Storage: HardDrive,
+  Career: Briefcase,
+  Finance: Wallet,
+  Healthcare: HeartPulse,
+  Marketing: Megaphone,
+  Management: Users,
+  Manufacturing: Factory,
+  Operations: Workflow,
+  Sales: TrendingUp,
+  HR: UserCog,
+};
+
+export function getCategoryIcon(name: string): LucideIcon {
+  return CATEGORY_ICONS[name] ?? BookMarked;
+}

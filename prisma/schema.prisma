@@ -213,6 +213,8 @@ model Book {
   viewCount     Int @default(0)
   downloadCount Int @default(0)
 
+  downloadLimit Int?
+
   companyId String
   company   Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
 
