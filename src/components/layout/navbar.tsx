@@ -79,7 +79,7 @@ export function Navbar({ categories }: { categories: NavCategory[] }) {
               key={href}
               href={href}
               onMouseEnter={() => setHovered(href)}
-              className="relative inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors"
+              className="relative inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors"
             >
               {href === "/saved" && <SavedCountBadge />}
               {hovered === href && (
