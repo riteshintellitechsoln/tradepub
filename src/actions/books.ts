@@ -312,7 +312,52 @@ export async function getLatestBooks(limit = 8): Promise<BookCardData[]> {
   });
 }
 
+// export async function getTrendingBooks(limit = 4): Promise<BookCardData[]> {
+//   return db.book.findMany({
+//     where: { status: "PUBLISHED", isTrending: true },
+//     orderBy: [{ downloadCount: "desc" }, { publishedAt: "desc" }],
+//     take: limit,
+//     select: bookCardSelect,
+//   });
+// }
+
+
 export async function getTrendingBooks(limit = 4): Promise<BookCardData[]> {
+  const isTuesday = new Date().getDay() === 2; // Sun=0, Mon=1, Tue=2...
+
+  if (isTuesday) {
+    const microsoftBooks = await db.book.findMany({
+      where: {
+        status: "PUBLISHED",
+        company: { name: { equals: "Microsoft", mode: "insensitive" } },
+      },
+      orderBy: { publishedAt: "desc" },
+      take: limit,
+      select: bookCardSelect,
+    });
+
+    if (microsoftBooks.length > 0) {
+      const remainingSlots = limit - microsoftBooks.length;
+      const usedIds = microsoftBooks.map((b) => b.id);
+
+      const rest =
+        remainingSlots > 0
+          ? await db.book.findMany({
+              where: {
+                status: "PUBLISHED",
+                isTrending: true,
+                id: { notIn: usedIds },
+              },
+              orderBy: [{ downloadCount: "desc" }, { publishedAt: "desc" }],
+              take: remainingSlots,
+              select: bookCardSelect,
+            })
+          : [];
+
+      return [...microsoftBooks, ...rest];
+    }
+  }
+
   return db.book.findMany({
     where: { status: "PUBLISHED", isTrending: true },
     orderBy: [{ downloadCount: "desc" }, { publishedAt: "desc" }],

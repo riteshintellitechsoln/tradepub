@@ -35,10 +35,29 @@ export function HorizontalScrollRow({ header, children }: HorizontalScrollRowPro
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function getStepWidth(): number {
+    const el = scrollRef.current;
+    if (!el) return 0;
+    const firstCard = el.firstElementChild as HTMLElement | null;
+    if (!firstCard) return el.clientWidth;
+
+    const style = window.getComputedStyle(el);
+    const gap = parseFloat(style.columnGap || style.gap || "16") || 16;
+    return firstCard.getBoundingClientRect().width + gap;
+  }
+
   function scrollByAmount(direction: 1 | -1) {
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollBy({ left: direction * el.clientWidth * 0.85, behavior: "smooth" });
+
+    const step = getStepWidth();
+    const maxScrollLeft = el.scrollWidth - el.clientWidth;
+    let target = el.scrollLeft + direction * step;
+
+    if (target < 0) target = 0;
+    if (target > maxScrollLeft) target = maxScrollLeft;
+
+    el.scrollTo({ left: target, behavior: "smooth" });
   }
 
   return (

@@ -1,4 +1,4 @@
- import { Hero } from "@/components/home/hero";
+import { Hero } from "@/components/home/hero";
 import { SectionHeader } from "@/components/home/section-header";
 import { CategoryScroller } from "@/components/home/category-scroller";
 import { BookGrid } from "@/components/books/book-grid";
@@ -23,15 +23,36 @@ export default async function HomePage() {
     { label: "Publishers", value: `${stats.totalCompanies}+` },
   ];
 
-  // Falls back to latest books' covers if nothing is flagged as featured yet
-  // (e.g. a fresh install before an Admin has curated anything).
-  const heroCovers = (featured.length ? featured : latest)
-    .slice(0, 3)
-    .map((book) => book.coverImageUrl);
-
   return (
     <>
-      <Hero stats={heroStats} coverImages={heroCovers} />
+      <Hero
+        stats={heroStats}
+        covers={trending.slice(0, 3).map((book) => ({
+          slug: book.slug,
+          coverImageUrl: book.coverImageUrl,
+          title: book.title,
+        }))}
+      />
+
+      {trending.length > 0 && (
+        <section id="trending" className="border-y bg-white/60 py-12 sm:py-16">
+          <div className="container">
+            <Reveal>
+              <SectionHeader eyebrow="Most downloaded" title="Trending Now" />
+            </Reveal>
+            <BookGrid>
+              {trending.map((book, i) => (
+                <RevealItem key={book.id} index={i}>
+                  <BookCard
+                    book={book}
+                    badge={{ label: "Trending", variant: "default" }}
+                  />
+                </RevealItem>
+              ))}
+            </BookGrid>
+          </div>
+        </section>
+      )}
 
       <section className="container py-12 sm:py-16">
         <Reveal>
@@ -77,26 +98,6 @@ export default async function HomePage() {
           ))}
         </BookGrid>
       </section>
-
-      {trending.length > 0 && (
-        <section id="trending" className="border-y bg-white/60 py-12 sm:py-16">
-          <div className="container">
-            <Reveal>
-              <SectionHeader eyebrow="Most downloaded" title="Trending Now" />
-            </Reveal>
-            <BookGrid>
-              {trending.map((book, i) => (
-                <RevealItem key={book.id} index={i}>
-                  <BookCard
-                    book={book}
-                    badge={{ label: "Trending", variant: "default" }}
-                  />
-                </RevealItem>
-              ))}
-            </BookGrid>
-          </div>
-        </section>
-      )}
     </>
   );
 }
