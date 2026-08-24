@@ -575,7 +575,6 @@ export async function getBooksBySlugs(slugs: string[]): Promise<BookCardData[]> 
     .map((slug) => bySlug.get(slug))
     .filter((b): b is BookCardData => Boolean(b));
 }
-
 export async function getRecommendationsForSlugs(
   slugs: string[],
   limit = 4,
@@ -593,14 +592,43 @@ export async function getRecommendationsForSlugs(
 
   if (categorySlugs.length === 0) return [];
 
-  return db.book.findMany({
+  const candidates = await db.book.findMany({
     where: {
       status: "PUBLISHED",
       slug: { notIn: slugs },
       categories: { some: { category: { slug: { in: categorySlugs } } } },
     },
     orderBy: { downloadCount: "desc" },
-    take: limit,
-    select: bookCardSelect,
+    take: limit * 4,
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      shortDescription: true,
+      coverImageUrl: true,
+      isFeatured: true,
+      isTrending: true,
+      publishedAt: true,
+      downloadCount: true,
+      company: { select: { name: true, logoUrl: true } },
+      categories: { select: { category: { select: { name: true, slug: true } } } },
+    },
   });
+
+  return candidates
+    .map((book) => {
+      const overlap = book.categories.filter((c) =>
+        categorySlugs.includes(c.category.slug),
+      ).length;
+      return { book, overlap };
+    })
+    .sort((a, b) => {
+      if (b.overlap !== a.overlap) return b.overlap - a.overlap;
+      return b.book.downloadCount - a.book.downloadCount;
+    })
+    .slice(0, limit)
+    .map(({ book }) => {
+      const { downloadCount, categories, ...rest } = book;
+      return { ...rest, categories: categories.slice(0, 1) };
+    });
 }
