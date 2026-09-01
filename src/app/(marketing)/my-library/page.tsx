@@ -817,14 +817,14 @@ export default async function MyLibraryPage({
           description="Browse the catalog and download something — it'll show up here."
         />
       ) : (
-        <div className="max-h-[340px] overflow-y-auto pr-2">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="max-h-[340px] overflow-y-auto pr-2 ">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-3 ">
             {result.downloads.map((download) => (
               <div
                 key={download.id}
                 className="group flex flex-col gap-4 rounded-xl border bg-card p-4 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary hover:bg-gradient-to-r hover:from-primary/10 hover:to-seal/10 hover:shadow-[0_20px_40px_-8px_rgba(22,35,78,0.2),0_8px_16px_-4px_rgba(22,35,78,0.12)] sm:flex-row sm:items-center"
               >
-              <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-lg border shadow-sm">
+              <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-lg border shadow-sm ">
                 <Image
                   src={download.book.coverImageUrl}
                   alt={download.book.title}
