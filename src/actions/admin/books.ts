@@ -203,6 +203,7 @@ export async function getAdminBooksList({
         status: true,
         downloadCount: true,
         downloadLimit: true,
+        forceOutOfStock: true,
         company: { select: { name: true } },
       },
     }),

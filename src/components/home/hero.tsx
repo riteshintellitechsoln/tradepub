@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -10,14 +10,21 @@ import {
   useSpring,
   type Variants,
 } from "framer-motion";
-import { ArrowRight, BookOpen, Search, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, Search, TrendingUp } from "lucide-react";
 
 interface HeroStat {
   label: string;
   value: string;
 }
 
-const MotionLink = motion(Link);
+interface HeroCover {
+  slug: string;
+  coverImageUrl: string;
+  title: string;
+}
+
+// const MotionLink = motion(Link);
+const MotionLink = motion.create(Link);
 
 const containerVariants: Variants = {
   hidden: {},
@@ -35,9 +42,6 @@ const itemVariants: Variants = {
   },
 };
 
-// Animates a stat's leading number from 0 up to its target once it scrolls
-// into view. Splits "1,200+" into the numeric part ("1,200") and the
-// trailing suffix ("+") so the suffix stays put while the number counts up.
 function StatValue({ value }: { value: string }) {
   const match = value.match(/^([\d,]+)(.*)$/);
   const ref = useRef<HTMLSpanElement>(null);
@@ -62,10 +66,7 @@ function StatValue({ value }: { value: string }) {
   return <span ref={ref}>{display}</span>;
 }
 
-// Layered, floating book-cover stack. Tilts toward the cursor (subtle
-// parallax) and each card bobs up/down on its own slow loop so the stack
-// feels alive even when the mouse isn't moving.
-function CoverStack({ coverImages }: { coverImages: string[] }) {
+function CoverStack({ covers }: { covers: HeroCover[] }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -86,14 +87,16 @@ function CoverStack({ coverImages }: { coverImages: string[] }) {
     my.set(0);
   }
 
-  const covers = coverImages.slice(0, 3);
+  // const items = covers.slice(0, 3);
+  const items = (covers ?? []).slice(0, 3);
   const layout = [
     { rotate: -8, x: -70, y: 10, z: 10, float: 3.4 },
     { rotate: 2, x: 0, y: -18, z: 30, float: 4.2 },
     { rotate: 9, x: 70, y: 14, z: 20, float: 3.8 },
   ];
+  const DEFAULT_POS = { rotate: 0, x: 0, y: 0, z: 10, float: 4 };
 
-  if (covers.length === 0) return null;
+  if (items.length === 0) return null;
 
   return (
     <div
@@ -102,11 +105,12 @@ function CoverStack({ coverImages }: { coverImages: string[] }) {
       onMouseLeave={handleMouseLeave}
       className="relative mx-auto h-72 w-full max-w-md sm:h-80"
     >
-      {covers.map((src, i) => {
-        const pos = layout[i % layout.length];
+      
+            {items.map((cover, i) => {
+        const pos = layout[i % layout.length] ?? DEFAULT_POS;
         return (
           <motion.div
-            key={src + i}
+            key={cover.slug + i}
             className="absolute left-1/2 top-1/2"
             style={{
               x: springX,
@@ -130,14 +134,20 @@ function CoverStack({ coverImages }: { coverImages: string[] }) {
                 translateY: pos.y - 90,
               }}
               whileHover={{ scale: 1.06, rotate: 0 }}
-              className="h-44 w-32 overflow-hidden rounded-xl border-4 border-white shadow-2xl sm:h-52 sm:w-36"
+              className="h-44 w-32 sm:h-52 sm:w-36"
             >
-              <img
-                src={src}
-                alt=""
-                className="h-full w-full object-cover"
-                draggable={false}
-              />
+              <Link
+                href={`/book/${cover.slug}`}
+                aria-label={cover.title}
+                className="block h-full w-full overflow-hidden rounded-xl border-4 border-white shadow-2xl"
+              >
+                <img
+                  src={cover.coverImageUrl}
+                  alt=""
+                  className="h-full w-full object-cover"
+                  draggable={false}
+                />
+              </Link>
             </motion.div>
           </motion.div>
         );
@@ -148,19 +158,16 @@ function CoverStack({ coverImages }: { coverImages: string[] }) {
         animate={{ y: [0, -6, 0] }}
         transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
       >
-        <Sparkles className="h-3 w-3" />
-        Curated weekly
+        <TrendingUp className="h-3 w-3" />
+        Trending this week
       </motion.div>
     </div>
   );
 }
 
-export function Hero({ stats, coverImages }: { stats: HeroStat[]; coverImages: string[] }) {
+export function Hero({ stats, covers }: { stats: HeroStat[]; covers: HeroCover[] }) {
   return (
     <section className="relative overflow-hidden border-b bg-white">
-      {/* Mesh gradient background -- multiple color blobs, each drifting
-          on its own slow independent loop so the motion reads as ambient
-          rather than mechanical */}
       <motion.div
         aria-hidden
         className="absolute inset-0 -z-0 bg-[radial-gradient(circle_at_10%_15%,rgba(37,99,235,.16),transparent_26rem)]"
@@ -183,7 +190,6 @@ export function Hero({ stats, coverImages }: { stats: HeroStat[]; coverImages: s
         aria-hidden
         className="absolute inset-0 -z-0 opacity-[0.035] [background-image:linear-gradient(#0f172a_1px,transparent_1px),linear-gradient(90deg,#0f172a_1px,transparent_1px)] [background-size:36px_36px]"
       />
-
       <div className="container relative z-10 grid gap-12 py-14 sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-24">
         <motion.div
           className="text-center lg:text-left"
@@ -201,7 +207,6 @@ export function Hero({ stats, coverImages }: { stats: HeroStat[]; coverImages: s
             </span>
             Free research, curated for professionals
           </motion.div>
-
           <motion.h1
             variants={itemVariants}
             className="mx-auto mt-5 max-w-xl font-display text-4xl font-extrabold tracking-tight text-[#06396d] sm:text-5xl lg:mx-0 lg:text-6xl"
@@ -211,14 +216,12 @@ export function Hero({ stats, coverImages }: { stats: HeroStat[]; coverImages: s
               confidence.
             </span>
           </motion.h1>
-
           <motion.p
             variants={itemVariants}
             className="mx-auto mt-5 max-w-xl text-base leading-7 text-slate-600 sm:text-lg lg:mx-0"
           >
             Discover trusted white papers, reports, case studies, and eBooks for your next important decision.
           </motion.p>
-
           <motion.div
             variants={itemVariants}
             className="mt-7 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start"
@@ -242,7 +245,6 @@ export function Hero({ stats, coverImages }: { stats: HeroStat[]; coverImages: s
               <Search className="h-4 w-4" /> Search the library
             </MotionLink>
           </motion.div>
-
           <motion.div
             variants={itemVariants}
             className="mx-auto mt-10 grid max-w-xl grid-cols-3 gap-3 lg:mx-0"
@@ -261,7 +263,6 @@ export function Hero({ stats, coverImages }: { stats: HeroStat[]; coverImages: s
               </motion.div>
             ))}
           </motion.div>
-
           <motion.div
             variants={itemVariants}
             className="mt-6 flex items-center justify-center gap-2 text-xs text-slate-500 lg:justify-start"
@@ -269,16 +270,14 @@ export function Hero({ stats, coverImages }: { stats: HeroStat[]; coverImages: s
             <BookOpen className="h-3.5 w-3.5" /> No subscription needed
           </motion.div>
         </motion.div>
-
         <motion.div
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
         >
-          <CoverStack coverImages={coverImages} />
+          <CoverStack covers={covers} />
         </motion.div>
       </div>
-
       <style>{`
         .hero-pulse-ring {
           animation: hero-pulse 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;

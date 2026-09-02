@@ -72,7 +72,8 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: "easeOut" },
+    // transition: { duration: 0.5, ease: "easeOut" },
+    transition: { duration: 0.55, ease: "easeOut" as const },
   },
 };
 
@@ -259,13 +260,13 @@ export function Footer({ categories }: { categories: NavCategory[] }) {
             Get your ebook, whitepaper, or report in front of thousands of
             verified business buyers.
           </p>
-          <a
-            href="mailto:publishers@tradehub.example"
-            className="group mt-2 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                   <Link
+            href="/publish"
+            className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
           >
             Publish with us
-            <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </Link>
         </motion.div>
       </motion.div>
 

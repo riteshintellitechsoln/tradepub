@@ -484,6 +484,14 @@ export default async function AdminBooksPage({ searchParams }: AdminBooksPagePro
           {
             header: "Stock",
             cell: (b) => {
+              // A manual override always wins over the computed stock value.
+              if (b.forceOutOfStock) {
+                return (
+                  <Badge variant="destructive" className="gap-1">
+                    Out of Stock <span className="opacity-75">(Manual)</span>
+                  </Badge>
+                );
+              }
               if (b.downloadLimit == null) {
                 return <span className="text-muted-foreground">{b.downloadCount} / Unlimited</span>;
               }

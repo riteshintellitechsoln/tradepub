@@ -13,6 +13,8 @@ import {
   Mail,
   BarChart3,
   Settings,
+  Activity,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +28,10 @@ const NAV_ITEMS = [
   { href: "/admin/downloads", label: "Downloads", icon: Download },
   { href: "/admin/email-logs", label: "Email Logs", icon: Mail },
   { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/admin/activity", label: "Activity", icon: Activity },
+  { href: "/admin/publisher-requests", label: "Publisher Requests", icon: FileText },
   { href: "/admin/settings", label: "Settings", icon: Settings },
+
 ];
 
 // Client component only because it needs usePathname() for active-link
