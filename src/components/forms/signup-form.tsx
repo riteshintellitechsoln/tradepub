@@ -1,12 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
-import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, MailCheck } from "lucide-react";
 
 import { signupSchema, type SignupInput } from "@/lib/validations/signup";
 import { signUpUser } from "@/actions/signup";
@@ -22,13 +19,20 @@ import {
 } from "@/components/ui/form";
 
 export function SignupForm() {
-  const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
 
   const form = useForm<SignupInput>({
     resolver: zodResolver(signupSchema),
-    defaultValues: { fullName: "", email: "", password: "", confirmPassword: "" },
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      companyName: "",
+      jobTitle: "",
+    },
   });
 
   async function onSubmit(values: SignupInput) {
@@ -36,48 +40,62 @@ export function SignupForm() {
     setIsSubmitting(true);
 
     const result = await signUpUser(values);
+    setIsSubmitting(false);
 
     if (!result.success) {
-      setIsSubmitting(false);
       setServerError(result.error);
       return;
     }
 
-    const signInResult = await signIn("credentials", {
-      email: values.email,
-      password: values.password,
-      redirect: false,
-    });
+    setSubmittedEmail(values.email);
+  }
 
-    setIsSubmitting(false);
-
-    if (signInResult?.error) {
-      toast.success("Account created — please sign in.");
-      router.push("/login");
-      return;
-    }
-
-    toast.success("Welcome to TradeHub!");
-    router.push("/my-library");
-    router.refresh();
+  if (submittedEmail) {
+    return (
+      <div className="flex flex-col items-center py-6 text-center">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+          <MailCheck className="h-6 w-6 text-primary" />
+        </div>
+        <h2 className="font-display text-xl font-bold">Check your email</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          We&apos;ve sent a link to <span className="font-medium text-foreground">{submittedEmail}</span> —
+          click it to set your password and finish creating your account.
+        </p>
+      </div>
+    );
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
-        <FormField
-          control={form.control}
-          name="fullName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Full name</FormLabel>
-              <FormControl>
-                <Input placeholder="Jane Doe" autoComplete="name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Jane" autoComplete="given-name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Doe" autoComplete="family-name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}
@@ -95,41 +113,46 @@ export function SignupForm() {
 
         <FormField
           control={form.control}
-          name="password"
+          name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Phone number</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  placeholder="At least 8 characters"
-                  autoComplete="new-password"
-                  {...field}
-                />
+                <Input type="tel" placeholder="+1 234 567 8900" autoComplete="tel" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm password</FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  placeholder="Re-enter your password"
-                  autoComplete="new-password"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="companyName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Company name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Acme Corp" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="jobTitle"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Designation</FormLabel>
+                <FormControl>
+                  <Input placeholder="Marketing Manager" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         {serverError && (
           <p role="alert" className="text-sm font-medium text-destructive">

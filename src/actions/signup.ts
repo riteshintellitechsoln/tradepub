@@ -1,8 +1,9 @@
 "use server";
 
-import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { signupSchema, type SignupInput } from "@/lib/validations/signup";
+import { generatePasswordSetToken } from "@/lib/password-reset-token";
+import { sendSetPasswordEmail } from "@/lib/email/set-password";
 
 type SignupResult = { success: true } | { success: false; error: string };
 
@@ -23,15 +24,36 @@ export async function signUpUser(input: SignupInput): Promise<SignupResult> {
     return { success: false, error: "An account with this email already exists." };
   }
 
-  const hashedPassword = await bcrypt.hash(parsed.data.password, 12);
+  const { token, tokenHash, expiresAt } = generatePasswordSetToken();
 
   await db.user.create({
     data: {
-      name: parsed.data.fullName,
+      name: `${parsed.data.firstName} ${parsed.data.lastName}`,
+      firstName: parsed.data.firstName,
+      lastName: parsed.data.lastName,
       email,
-      password: hashedPassword,
+      phone: parsed.data.phone,
+      companyName: parsed.data.companyName,
+      jobTitle: parsed.data.jobTitle,
+      passwordResetTokenHash: tokenHash,
+      passwordResetTokenExpiresAt: expiresAt,
     },
   });
+
+  const setPasswordUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/set-password?token=${token}`;
+
+  const emailResult = await sendSetPasswordEmail({
+    to: email,
+    firstName: parsed.data.firstName,
+    setPasswordUrl,
+  });
+
+  if (!emailResult.success) {
+    return {
+      success: false,
+      error: "Account created, but we couldn't send the password-setup email. Please contact support.",
+    };
+  }
 
   return { success: true };
 }

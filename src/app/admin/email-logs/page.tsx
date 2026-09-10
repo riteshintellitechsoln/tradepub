@@ -89,6 +89,9 @@ import { AdminTable } from "@/components/admin/admin-table";
 import { Pagination } from "@/components/shared/pagination";
 import { Badge } from "@/components/ui/badge";
 
+
+import { ExportExcelButton } from "@/components/admin/export-excel-button";
+
 interface AdminEmailLogsPageProps {
   searchParams: Promise<{ page?: string; status?: string; from?: string; to?: string }>;
 }
@@ -149,10 +152,21 @@ export default async function AdminEmailLogsPage({ searchParams }: AdminEmailLog
     const qs = params.toString();
     return `/admin/email-logs${qs ? `?${qs}` : ""}`;
   }
+   const exportData = logs.map((l) => ({
+    To: l.to,
+    Subject: l.subject,
+    Book: l.download.book.title,
+    Status: l.status,
+    "Sent At": l.sentAt ? format(l.sentAt, "yyyy-MM-dd HH:mm") : "",
+    Error: l.error ?? "",
+  }));
 
   return (
     <div>
-      <h1 className="mb-6 font-display text-2xl font-bold">Email Logs ({totalCount})</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="font-display text-2xl font-bold">Email Logs ({totalCount})</h1>
+        <ExportExcelButton data={exportData} filename="email-logs-export" sheetName="Email Logs" />
+      </div>
 
       <AdminFilterBar>
         <AdminFilterField label="Status">

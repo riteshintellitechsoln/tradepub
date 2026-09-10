@@ -122,6 +122,8 @@ import { ResendEmailButton } from "@/components/admin/resend-email-button";
 import { Pagination } from "@/components/shared/pagination";
 import { Badge } from "@/components/ui/badge";
 
+import { ExportExcelButton } from "@/components/admin/export-excel-button";
+
 interface AdminDownloadsPageProps {
   searchParams: Promise<{
     q?: string;
@@ -196,9 +198,22 @@ export default async function AdminDownloadsPage({ searchParams }: AdminDownload
     return `/admin/downloads${qs ? `?${qs}` : ""}`;
   }
 
+    const exportData = downloads.map((d) => ({
+    "Lead Name": d.lead.fullName,
+    "Lead Email": d.lead.email,
+    Book: d.book.title,
+    Status: d.status,
+    Requested: format(d.createdAt, "yyyy-MM-dd HH:mm"),
+    Downloaded: d.downloadedAt ? format(d.downloadedAt, "yyyy-MM-dd HH:mm") : "",
+  }));
+
   return (
     <div>
-      <h1 className="mb-6 font-display text-2xl font-bold">Downloads ({totalCount})</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="font-display text-2xl font-bold">Downloads ({totalCount})</h1>
+        <ExportExcelButton data={exportData} filename="downloads-export" sheetName="Downloads" />
+      </div>
+
 
       <AdminFilterBar>
         <AdminFilterField label="Search">
