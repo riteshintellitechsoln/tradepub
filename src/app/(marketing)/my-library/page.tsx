@@ -662,18 +662,20 @@
 //       />
 //     </div>
 //   );
-// }
+// } 
+
+
+
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
 import type { Metadata } from "next";
-import { Mail, Download } from "lucide-react";
+import { Lock, Download } from "lucide-react";
 
 import { auth } from "@/lib/auth";
 import { getLibraryByEmail } from "@/actions/library";
 import { getRecommendationsForSlugs } from "@/actions/books";
 
-import { LibraryLookupForm } from "@/components/library/library-lookup-form";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
 import { RecommendationCarousel } from "@/components/library/recommendation-carousel";
@@ -682,38 +684,33 @@ export const metadata: Metadata = {
   title: "My Library",
 };
 
-interface MyLibraryPageProps {
-  searchParams: Promise<{
-    email?: string;
-  }>;
-}
-
-export default async function MyLibraryPage({
-  searchParams,
-}: MyLibraryPageProps) {
+export default async function MyLibraryPage() {
   const session = await auth();
-  const sp = await searchParams;
-
-  const email = session?.user?.email ?? sp.email;
+  const email = session?.user?.email;
 
   if (!email) {
     return (
       <div className="container flex min-h-[60vh] max-w-md flex-col items-center justify-center py-20 text-center">
         <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-          <Mail className="h-6 w-6 text-primary" />
+          <Lock className="h-6 w-6 text-primary" />
         </div>
 
         <h1 className="font-display text-2xl font-bold">
-          My Library
+          Sign in to view your library
         </h1>
 
         <p className="mt-2 text-sm text-muted-foreground">
-          Enter the email you used to download resources to see your history —
-          no account needed.
+          For your privacy, your download history is only visible once
+          you&apos;re signed in — not just by entering an email address.
         </p>
 
-        <div className="mt-6 w-full rounded-xl border bg-card p-5 shadow-sm">
-          <LibraryLookupForm className="w-full" />
+        <div className="mt-6 flex gap-3">
+          <Button asChild>
+            <Link href="/login?callbackUrl=/my-library">Sign in</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/signup">Create an account</Link>
+          </Button>
         </div>
       </div>
     );
@@ -735,33 +732,22 @@ export default async function MyLibraryPage({
     return (
       <div className="container flex min-h-[60vh] max-w-md flex-col items-center justify-center py-20 text-center">
         <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
-          <Mail className="h-6 w-6 text-destructive" />
+          <Lock className="h-6 w-6 text-destructive" />
         </div>
 
         <h1 className="font-display text-2xl font-bold">
-          No account found
+          No downloads found
         </h1>
 
         <p className="mt-2 text-sm text-muted-foreground">
-          An account has not been created for{" "}
-          <span className="font-medium text-foreground">
-            {email}
-          </span>
-          . To create one, request a resource and verify your email address —
-          your library will start automatically after that.
+          Nothing has been downloaded yet with{" "}
+          <span className="font-medium text-foreground">{email}</span>.
+          Browse the catalog to get started.
         </p>
 
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6">
           <Button asChild>
-            <Link href="/category">
-              Browse resources
-            </Link>
-          </Button>
-
-          <Button variant="outline" asChild>
-            <Link href="/my-library">
-              Try a different email
-            </Link>
+            <Link href="/category">Browse resources</Link>
           </Button>
         </div>
       </div>
@@ -792,22 +778,7 @@ export default async function MyLibraryPage({
 
         <p className="text-sm text-muted-foreground">
           Showing downloads for{" "}
-          <span className="font-medium text-foreground">
-            {email}
-          </span>
-
-          {!session?.user && (
-            <>
-              {" "}
-              ·{" "}
-              <Link
-                href="/my-library"
-                className="underline hover:text-foreground"
-              >
-                Look up a different email
-              </Link>
-            </>
-          )}
+          <span className="font-medium text-foreground">{email}</span>
         </p>
       </div>
 

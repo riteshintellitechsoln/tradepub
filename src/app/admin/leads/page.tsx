@@ -85,7 +85,9 @@ import { getDateRange } from "@/lib/admin-filters";
 import { AdminSearchBox } from "@/components/admin/admin-search-box";
 import { AdminFilterBar, AdminFilterField } from "@/components/admin/admin-filter-bar";
 import { AdminDateRangeFilter } from "@/components/admin/admin-date-range-filter";
+
 import { AdminTable } from "@/components/admin/admin-table";
+import { ExportExcelButton } from "@/components/admin/export-excel-button";
 import { Pagination } from "@/components/shared/pagination";
 
 interface AdminLeadsPageProps {
@@ -134,11 +136,26 @@ export default async function AdminLeadsPage({ searchParams }: AdminLeadsPagePro
     return `/admin/leads${qs ? `?${qs}` : ""}`;
   }
 
+ 
+
+       const exportData = leads.map((l) => ({
+    Name: l.fullName,
+    Email: l.email,
+    Company: l.companyName,
+    "Job Title": l.jobTitle,
+    Industry: l.industry,
+    Country: l.country,
+    Captured: format(l.createdAt, "yyyy-MM-dd HH:mm"),
+  }));
+
   return (
     <div>
-      <h1 className="mb-6 font-display text-2xl font-bold">Leads ({totalCount})</h1>
-
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="font-display text-2xl font-bold">Leads ({totalCount})</h1>
+        <ExportExcelButton data={exportData} filename="leads-export" sheetName="Leads" />
+      </div>
       <AdminFilterBar>
+        
         <AdminFilterField label="Search">
           <AdminSearchBox placeholder="Search by name, email, or company..." />
         </AdminFilterField>

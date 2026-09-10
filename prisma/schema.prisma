@@ -35,6 +35,16 @@ model User {
   leads         Lead[]
   sessions      Session[]
 
+
+firstName                   String?
+  lastName                    String?
+  phone                       String?
+  companyName                 String?
+  jobTitle                    String?
+  passwordResetTokenHash      String?
+  passwordResetTokenExpiresAt DateTime?
+
+
   @@map("users")
 }
 
@@ -294,6 +304,10 @@ model PublisherRequest {
   adminNotes      String?
   createdAt       DateTime               @default(now())
   updatedAt       DateTime               @updatedAt
+
+
+  
+
 
   @@index([status])
   @@index([createdAt])
